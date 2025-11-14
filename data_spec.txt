@@ -1,0 +1,31 @@
+Data will be stored in CSV files.
+
+The first line will be the metadata of the song. It will include any of the following (update when decided)
+- Song tempo
+- Song time signature
+
+tempo, beats per measure, beat type
+ex. 60 bpm, 4/4 would be "60, 4, 4"
+
+Every line after will be a single instruction to be read by the parser. It will be in the form of
+
+note, beat count, beat type
+
+A note value of "R" will result in a rest
+
+Beat types include:
+- Whole (1)
+- Half (2)
+- Quarter (4)
+- Eighth (8)
+- Sixteenth (16)
+
+ex. Middle C played as a quarter note would be "C4, 1, 4"
+
+There will have to be a small, default rest time at the end of a note to ensure that subsequent notes of the same frequency do not blend together.
+
+Blank lines will be ignored, allowing for organization of music
+
+Possible additional features:
+- Triplets
+- Comment system

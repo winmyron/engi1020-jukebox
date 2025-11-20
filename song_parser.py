@@ -1,0 +1,110 @@
+from engi1020.arduino.api import buzzer_note, buzzer_stop, buzzer_frequency
+import csv
+
+from time import sleep
+
+BUZZER_PIN = 4
+
+NOTE_BASE_FREQUENCIES: dict[str, float] = {
+    "C": 16.35,
+    "C#": 17.32,
+    "D": 18.35,
+    "D#": 19.45,
+    "E": 20.6,
+    "F": 21.83,
+    "F#": 23.12,
+    "G": 24.5,
+    "G#": 25.96,
+    "A": 27.5,
+    "A#": 29.14,
+    "B": 30.87,
+}
+
+# Octaves are exactly double or half one another. Therefore we can multiply the above by 2^x, where x is the octave.
+
+def get_note_duration(tempo: float, beat_note: int, note_type: int, note_count: int) -> float:
+    """
+    Gets the duration of a note using a formula, t = nm/f^2, where
+        t = time (s)
+        n = # of notes
+        m = note type, as a fraction of the duration of the note that gets the beat
+        f = tempo (Hz)
+    """
+
+    m = beat_note / note_type
+    f = tempo * (1 / 60) # Convert from BPM to Hz
+
+    t = (note_count * m) / f**2 # Duration
+
+    return t
+
+
+def get_note_frequency(note: str) -> int:
+    octave: int = int(note[-1])
+
+    note_name: str = note[:-1]
+
+    frequency = NOTE_BASE_FREQUENCIES[note_name] * (2 ** octave)
+    
+    return int(frequency)
+
+
+def parse_metadata(metadata: list[str]) -> tuple[float, int, int]:
+    # Metadata format as tempo, beat_count, beat_type
+    tempo: float = float(metadata[0])
+    beat_count: int = int(metadata[1])
+    beat_type: int = int(metadata[2])
+
+    return (tempo, beat_count, beat_type)
+
+
+def parse_line(line: list, metadata: tuple) -> tuple[int, float]: #pass in line of data
+    note = line[0]
+
+    tempo = metadata[0]
+    beat_type = metadata[2]
+
+    if note == "R":
+        frequency = 0
+    else:
+        frequency = get_note_frequency(note)
+    
+    duration = get_note_duration(tempo, beat_type, int(line[2]), int(line[1]))
+
+    return (frequency, duration)
+
+
+def play_song(freq, duration):
+    if freq == 0:
+        sleep(duration)
+    else:
+        # TODO: buzzer_note
+        pass
+
+
+
+def parse_song(filename: str): #song data in some form
+    with open(filename, 'r') as csvfile:
+        csvreader = csv.reader(csvfile)
+
+        metadata = parse_metadata(next(csvreader))
+        
+        for line in csvreader:
+            note_data: tuple
+
+            if line == []:
+                continue
+            else:
+                note_data = parse_line(line, metadata)
+
+            print(note_data)
+
+
+if __name__ == "__main__":
+    # directory = "songs"
+    test_song = "songs/mary-had-a-little-lamb.csv"
+
+    print(get_note_frequency("A#6"))
+    print(get_note_duration(60, 4, 8, 3))
+
+    parse_song(test_song)

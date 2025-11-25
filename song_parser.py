@@ -1,7 +1,4 @@
-from engi1020.arduino.api import buzzer_note, buzzer_stop, buzzer_frequency
 import csv
-
-from time import sleep
 
 NOTE_BASE_FREQUENCIES: dict[str, float] = {
     "C": 16.35,
@@ -33,6 +30,8 @@ def get_note_duration(tempo: float, beat_note: int, note_type: int, note_count: 
     f = tempo * (1 / 60) # Convert from BPM to Hz
 
     t = (note_count * m) / f**2 # Duration
+
+    print(t)
 
     return t
 
@@ -72,15 +71,9 @@ def parse_line(line: list, metadata: tuple) -> tuple[int, float]: #pass in line 
     return (frequency, duration)
 
 
-def play_song(freq, duration):
-    if freq == 0:
-        sleep(duration)
-    else:
-        buzzer_note(5, freq, duration)
-
-
-
 def parse_song(filename: str): #song data in some form
+    buzzer_instructions = []
+
     with open(filename, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
 
@@ -93,8 +86,9 @@ def parse_song(filename: str): #song data in some form
                 continue
             else:
                 note_data = parse_line(line, metadata)
+                buzzer_instructions.append(note_data)
 
-            print(note_data)
+    return buzzer_instructions
 
 
 if __name__ == "__main__":

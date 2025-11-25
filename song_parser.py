@@ -3,8 +3,6 @@ import csv
 
 from time import sleep
 
-BUZZER_PIN = 4
-
 NOTE_BASE_FREQUENCIES: dict[str, float] = {
     "C": 16.35,
     "C#": 17.32,
@@ -78,8 +76,7 @@ def play_song(freq, duration):
     if freq == 0:
         sleep(duration)
     else:
-        # TODO: buzzer_note
-        pass
+        buzzer_note(5, freq, duration)
 
 
 

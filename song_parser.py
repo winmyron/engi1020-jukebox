@@ -31,12 +31,13 @@ def get_note_duration(tempo: float, beat_note: int, note_type: int, note_count: 
 
     t = (note_count * m) / f**2 # Duration
 
-    print(t)
-
     return t
 
 
 def get_note_frequency(note: str) -> int:
+    """
+    Gets the frequency to play from the note by taking the base frequency of the note and multiplying it by 2^octave
+    """
     octave: int = int(note[-1])
 
     note_name: str = note[:-1]
@@ -46,6 +47,7 @@ def get_note_frequency(note: str) -> int:
     return int(frequency)
 
 
+# Parses the first line of a data file
 def parse_metadata(metadata: list[str]) -> tuple[float, int, int]:
     # Metadata format as tempo, beat_count, beat_type
     tempo: float = float(metadata[0])
@@ -55,7 +57,8 @@ def parse_metadata(metadata: list[str]) -> tuple[float, int, int]:
     return (tempo, beat_count, beat_type)
 
 
-def parse_line(line: list, metadata: tuple) -> tuple[int, float]: #pass in line of data
+# Parse a single line of the data file that is not the first one
+def parse_line(line: list, metadata: tuple) -> tuple[int, float]:
     note = line[0]
 
     tempo = metadata[0]
@@ -67,12 +70,19 @@ def parse_line(line: list, metadata: tuple) -> tuple[int, float]: #pass in line 
         frequency = get_note_frequency(note)
     
     duration = get_note_duration(tempo, beat_type, int(line[2]), int(line[1]))
+    
+    print(frequency, duration)
 
     return (frequency, duration)
 
 
-def parse_song(filename: str): #song data in some form
+def parse_song(filename: str) -> list[tuple[int, float]]:
+    """
+    Parses an entire song data file and outputs it into a list of tuples which tell the buzzer what to do
+    """
     buzzer_instructions = []
+
+    print(filename)
 
     with open(filename, 'r') as csvfile:
         csvreader = csv.reader(csvfile)
@@ -89,13 +99,3 @@ def parse_song(filename: str): #song data in some form
                 buzzer_instructions.append(note_data)
 
     return buzzer_instructions
-
-
-if __name__ == "__main__":
-    # directory = "songs"
-    test_song = "songs/mary-had-a-little-lamb.csv"
-
-    print(get_note_frequency("A#6"))
-    print(get_note_duration(60, 4, 8, 3))
-
-    parse_song(test_song)

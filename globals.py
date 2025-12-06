@@ -2,6 +2,7 @@
 ROTARY_PIN: int = 0
 
 # Digital pins
+LED_PIN: int = 4
 BUZZER_PIN: int = 5
 BUTTON_PIN: int = 6
 

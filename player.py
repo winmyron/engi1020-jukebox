@@ -48,13 +48,13 @@ def play_line(frequency, duration):
 
 def toggle_pause(pause_state) -> bool:
     if pause_state == False:
-        digital_write(globals.BUZZER_PIN, True)
+        digital_write(globals.LED_PIN, True)
         oled_clear()
         oled_print("Song paused")
         sleep(0.25)
         return True
     else:
-        digital_write(globals.BUZZER_PIN, False)
+        digital_write(globals.LED_PIN, False)
         oled_clear()
         oled_print(f"Now Playing: {globals.SONG_LIST[globals.g_current_song_index]["name"]}")
         sleep(0.2)
